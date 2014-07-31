@@ -48,7 +48,7 @@ var CryptoJS = CryptoJS || function (s, p) {
 /*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
 var firstBy = (function () { function e(f) { f.thenBy = t; return f } function t(y, x) { x = this; return e(function (a, b) { return x(a, b) || y(a, b) }) } return e })();
 var GitFlowVisualize =
-    
+
 		(function () {
     	'use strict';
     	var self = {};
@@ -64,14 +64,14 @@ var GitFlowVisualize =
     		featurePrefix: "refs/heads/feature/",
     		releasePrefix: "refs/heads/release/",
     		hotfixPrefix: "refs/heads/hotfix/",
-    		
+
     	    // url params
     		project:null,
     		repo: null,
 
     		// any tag starting with this prefix will enhance the chance of the commit being on the develop branch
     		developBrancheHintPrefix: "devhint/",
-    		// this pattern should match the tags that are given to release commits on master 
+    		// this pattern should match the tags that are given to release commits on master
     		releaseTagPattern: /refs\/tags\/\d+(\.\d+)*\.0$/,
     		dataCallback: function(done) {
     		    var currUrl = document.location.pathname;
@@ -167,7 +167,7 @@ var GitFlowVisualize =
     				}
     			}
     		}
-    	    
+
     	    // fixup orderTimestamp for cases of rebasing and cherrypicking, where the parent can be younger than the child
     		var fixMyTimeRecursive = function (c, after) {
     		    if (!c) return;
@@ -187,7 +187,7 @@ var GitFlowVisualize =
     	                fixMyTimeRecursive(me, parent.orderTimestamp);
     	        }
     	    }
-    	    
+
     		result.branches = _data.branches.values;
     		for (var i = 0; i < result.branches.length; i++) {
     			var branch = result.branches[i];
@@ -620,7 +620,7 @@ var GitFlowVisualize =
 							.rangePoints([0, Math.min(size.width, 20 * columnsInOrder.length)]);
     			var y = d3.scale.linear()
 							.domain([0, data.chronoCommits.length])
-							.range([10, data.chronoCommits.length * 20]);
+							.range([10, data.chronoCommits.length * 30]);
 
     			var line = d3.svg.line()
 							//.interpolate("bundle")
@@ -750,14 +750,14 @@ var GitFlowVisualize =
     		        })
     		        .html(function(d) {
     		            var commitUrl = "/projects/" + options.project + "/repos/" + options.repo + "/commits/" + d.id;
-    		            var res = "<a class='commit-link' href='" + commitUrl + "' target='_blank'>" + d.displayId + "</a> ";
-    		            if (d.author && d.author.name) {
-    		                res += "<span class='aui-avatar aui-avatar-small user-avatar'><span class='aui-avatar-inner'><img src='https://secure.gravatar.com/avatar/" + CryptoJS.MD5(d.author.emailAddress) + ".jpg?s=48&amp;d=mm' title='" + (d.author.displayName || d.author.name) + "'/></span></span> ";
-    		            }
+    		            var res = "";
     		            if (d.authorTimestamp) {
     		                var dt = new Date(d.authorTimestamp);
     		                res += "<span class='date'>" + moment(dt).format("dd YY-MM-DD HH:mm:ss") + "</span> ";
     		            }
+
+                        res += "<span style='width: 500px'>";
+
     		            if (d.labels) {
     		                $.each($(d.labels), function(k, v) {
     		                    if (v.indexOf('refs/heads/') == 0) {
@@ -769,10 +769,17 @@ var GitFlowVisualize =
     		                    }
     		                });
     		            }
-    		            res += d.message;
+    		            res += "<span class='message'>" + d.message + "</span></span>";
+
+                        if (d.author && d.author.name) {
+                            //res += "<span class='aui-avatar aui-avatar-small user-avatar'><span class='aui-avatar-inner'><img src='https://secure.gravatar.com/avatar/" + CryptoJS.MD5(d.author.emailAddress) + ".jpg?s=48&amp;d=mm' title='" + (d.author.displayName || d.author.name) + "'/></span></span> ";
+                            res += "<span class='name'>" + d.author.name + "</span>"
+                        }
+                        res += "<a class='commit-link' href='" + commitUrl + "' target='_blank'>" + d.displayId + "</a> ";
+
     		            return res;
     		        });
-    		    
+
     		    function isElementInViewport(el) {
     		    	if (el instanceof jQuery) {el = el[0];}
     		    	var rect = el.getBoundingClientRect();
